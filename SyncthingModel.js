@@ -216,6 +216,52 @@ function deviceStatusLabel(device) {
 // the connection list line up; it just never gets a pause button.
 //
 
+// The web UI's device identicon, reproduced.
+//
+// Syncthing has no identicon endpoint: the GUI's
+// syncthing/core/identiconDirective.js builds an SVG in the browser from the
+// device ID, so matching it means reproducing that directive. The rules, in
+// order:
+//
+//   * a `size`x`size` grid (the directive hardcodes 5), cells at 100/size %
+//     each, with `middleCol = ceil(size / 2) - 1`;
+//   * the value is stripped to [A-Za-z0-9] with /[\W_]/g, which is what drops
+//     the dashes from a device ID;
+//   * a cell is filled when the char code at `row + col * size` is even, and the
+//     left half is mirrored into the right half, except that the middle column
+//     of an odd-sized grid mirrors onto itself.
+//
+// The directive reads that char code through `parseInt(... , 10)`, so a cell
+// whose index runs off the end of the value gets NaN, `NaN % 2` is NaN, and
+// `!NaN` is true -- out-of-range cells fill. `isNaN(code) || ...` keeps that
+// behaviour instead of silently treating it as unset.
+function identiconCells(value, size) {
+  var n = size || 5
+  var cells = []
+  // The directive guards the whole loop with `if (value)`, so a falsy value
+  // yields an empty icon rather than a solid grid.
+  if (!value) return cells
+  var text = String(value).replace(/[\W_]/g, "")
+  var middleCol = Math.ceil(n / 2) - 1
+  var filled = {}
+
+  for (var row = 0; row < n; row++) {
+    for (var col = middleCol; col >= 0; col--) {
+      var code = text.charCodeAt(row + col * n)
+      if (!(isNaN(code) || code % 2 === 0)) continue
+      filled[row * n + col] = true
+      if (!(n % 2 && col === middleCol)) {
+        filled[row * n + (n - col - 1)] = true
+      }
+    }
+  }
+
+  for (var index = 0; index < n * n; index++) {
+    if (filled[index]) cells.push({ row: Math.floor(index / n), col: index % n })
+  }
+  return cells
+}
+
 function buildDevices(config, status, connections, pendingDevices, stats) {
   var out = []
   var myId = str(isPlainObject(status) ? status.myID : "")
@@ -241,7 +287,8 @@ function buildDevices(config, status, connections, pendingDevices, stats) {
       address: conn !== null ? str(conn.address) : "",
       clientName: conn !== null ? str(conn.clientName) : "",
       lastSeen: seen,
-      lastSeenText: seen === "" ? "" : formatAgo(seen)
+      lastSeenText: seen === "" ? "" : formatAgo(seen),
+      identicon: identiconCells(id)
     }
     device.state = deviceState(device)
     device.statusLabel = deviceStatusLabel(device)
@@ -264,7 +311,8 @@ function buildDevices(config, status, connections, pendingDevices, stats) {
       address: "",
       clientLabel: "",
       lastSeen: "",
-      lastSeenText: ""
+      lastSeenText: "",
+      identicon: identiconCells(str(key))
     }
     extra.state = deviceState(extra)
     extra.statusLabel = deviceStatusLabel(extra)

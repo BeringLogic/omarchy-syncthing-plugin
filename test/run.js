@@ -20,7 +20,8 @@ const source = fs.readFileSync(path.join(__dirname, "..", "SyncthingModel.js"), 
 const load = new Function(
   source + "\nreturn { splitRecords, safeParse, isPlainObject, readApiKey, expandPath, parseHealth,"
     + " buildFolders, buildDevices, overallStatus, pendingCount, errorCount, formatBytes, formatAgo,"
-    + " formatUptime, folderState, folderProgress, folderErrorText, elide, shortId, deviceStatusLabel };"
+    + " formatUptime, folderState, folderProgress, folderErrorText, elide, shortId, deviceStatusLabel,"
+    + " identiconCells };"
 );
 const M = load();
 
@@ -447,6 +448,72 @@ check("elide long text", M.elide("x".repeat(100), 10).length, 10);
 check("elide collapses whitespace", M.elide("a   b\n\tc", 20), "a b c");
 check("short id", M.shortId(REMOTE_ID), "REMOTEV");
 check("short id of short input", M.shortId("abc"), "abc");
+// ------------------------------------------------------------- device identicon
+
+// The web UI builds these in the browser (syncthing/core/identiconDirective.js)
+// with no server-side endpoint, so the reference below is a verbatim port of
+// that directive and stands in as the oracle. If Syncthing ever changes the
+// algorithm, this is the place that should fail.
+const webUiIdenticon = (value, size) => {
+  const n = size || 5;
+  const middleCol = Math.ceil(n / 2) - 1;
+  const cells = [];
+  const shouldFill = (row, col) => !(parseInt(value.charCodeAt(row + col * n), 10) % 2);
+  const shouldMirror = (row, col) => !(n % 2 && col === middleCol);
+  if (value) {
+    // The directive reassigns `value` here, so the char codes read inside the
+    // loop are from the stripped string, not the raw one.
+    value = value.toString().replace(/[\W_]/g, "");
+    for (let row = 0; row < n; ++row) {
+      for (let col = middleCol; col > -1; --col) {
+        if (shouldFill(row, col)) {
+          cells.push([row, col]);
+          if (shouldMirror(row, col)) cells.push([row, n - col - 1]);
+        }
+      }
+    }
+  }
+  return cells.sort((a, b) => a[0] - b[0] || a[1] - b[1]).map(([r, c]) => r + "," + c).join("|");
+};
+
+const identiconText = (value, size) =>
+  M.identiconCells(value, size).map((c) => c.row + "," + c.col).join("|");
+
+const IDENTICON_IDS = [
+  SELF_ID,
+  REMOTE_ID,
+  "SHORT", "a", "abcdefghijklmnop", "12345",
+  "ZZZZZZZZZZZZZZZ", "0000000000000000", "x-y_z", "-----", "___",
+  "", "\u03a9", "\u{1f642}",
+];
+for (const id of IDENTICON_IDS) {
+  check(`identicon matches the web UI directive: ${JSON.stringify(id)}`,
+    identiconText(id), webUiIdenticon(id));
+}
+
+check("identicon of an empty value is empty, not a solid grid", M.identiconCells(""), []);
+check("identicon of a null value is empty", M.identiconCells(null), []);
+
+const cells = M.identiconCells(SELF_ID);
+check("identicon cells stay inside the 5x5 grid",
+  cells.every((c) => c.row >= 0 && c.row < 5 && c.col >= 0 && c.col < 5), true);
+check("identicon has no duplicate cells",
+  new Set(cells.map((c) => c.row + "," + c.col)).size, cells.length);
+check("identicon is left-right symmetric",
+  cells.every((c) => cells.some((m) => m.row === c.row && m.col === 4 - c.col)), true);
+check("identicon is deterministic",
+  identiconText(REMOTE_ID),
+  identiconText(REMOTE_ID));
+check("identicon of a device id equals the id with dashes removed",
+  identiconText("AB-CD-EF"), identiconText("ABCDEF"));
+
+// Every device the panel renders needs a pattern to draw.
+const devicesWithIcons = M.buildDevices(config, status, connections, pendingDevices, stats);
+check("buildDevices gives every device an identicon",
+  devicesWithIcons.every((d) => Array.isArray(d.identicon) && d.identicon.length > 0), true);
+check("buildDevices draws this device's identicon from its own id",
+  identiconText(status.myID), identiconText(devicesWithIcons.find((d) => d.isSelf).deviceID));
+
 // ------------------------------------------------------------------- summary
 
 console.log(`\n${passed} passed, ${failed} failed`);

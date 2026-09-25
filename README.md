@@ -15,7 +15,7 @@ this one treats the container as the thing that is up or down.
   - every shared folder, with a status-coloured icon, its name and status, a
     progress bar while work is in flight, a rescan button, and a pause/resume
     button;
-  - every device, with its icon, name, status, and a pause/resume button;
+  - every device, with its identicon, name, status, and a pause/resume button;
   - a footer link that opens the Syncthing web UI in the default browser.
 
 The panel is fully keyboard navigable: `↑`/`↓` (or `j`/`k`) move a cursor,
@@ -113,6 +113,20 @@ without holding a key or touching the Docker socket.
 
 `SyncthingModel.js` holds all the parsing and derivation and is pure, so it is
 covered by a Node test suite that runs against captured API responses.
+
+### Device identicons
+
+Devices are drawn with the same identicon the Syncthing web UI shows, so a
+device looks the same here as it does there. Syncthing has no identicon
+endpoint: the GUI's `syncthing/core/identiconDirective.js` builds a 5x5 SVG in
+the browser from the device ID, so `SyncthingModel.js` reproduces that
+directive. Only the first 15 characters of the ID matter, which is why these
+identicons are sparser than a typical avatar.
+
+The test suite keeps a verbatim port of the directive as an oracle and asserts
+the two agree, so an upstream change to the algorithm shows up as a test
+failure rather than as a silently different icon. Identicons are tinted by
+device state here, so a paused or offline device reads as such.
 
 ## Status precedence
 

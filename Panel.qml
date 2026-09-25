@@ -711,14 +711,50 @@ Panel {
       anchors.rightMargin: Style.space(8)
       spacing: Style.space(10)
 
-      Text {
-        text: deviceRow.device.isSelf ? "󰖜" : "󰘢"
-        color: root.deviceColor(deviceRow.device)
-        font.family: root.fontFamily
-        font.pixelSize: Style.font.icon
+      // The web UI's device identicon. Syncthing has no identicon endpoint --
+      // syncthing/core/identiconDirective.js builds a 5x5 SVG in the browser
+      // from the device ID -- so this is that pattern, precomputed and
+      // unit-tested in SyncthingModel.js. Kept in the same 18px slot the old
+      // glyph occupied so the row rhythm is unchanged.
+      Item {
+        Layout.preferredWidth: Style.space(18)
         Layout.alignment: Qt.AlignVCenter
-        width: Style.space(18)
-        horizontalAlignment: Text.AlignHCenter
+        implicitHeight: Style.font.icon
+
+        Item {
+          id: identicon
+          width: Style.font.icon
+          height: Style.font.icon
+          anchors.centerIn: parent
+
+          // A hairline frame so a sparse pattern still reads as a discrete
+          // avatar rather than a few stray pixels.
+          BorderSurface {
+            anchors.fill: parent
+            color: "transparent"
+            borderSpec: Border.flat(Qt.darker(root.foreground, 2.0), 1)
+            radius: Math.max(1, Style.cornerRadius * 0.5)
+          }
+
+          Repeater {
+            model: deviceRow.device && deviceRow.device.identicon
+              ? deviceRow.device.identicon
+              : []
+            delegate: Rectangle {
+              required property var modelData
+              // Cell edges are rounded to whole pixels. A 14px box gives 2.8px
+              // cells, and fractional edges get antialiased into a smudge, so
+              // this rounds the gridlines instead and lets the last cell absorb
+              // the remainder. That tiles the box exactly: no gaps, no overlap.
+              x: Math.round((modelData.col * identicon.width) / 5)
+              y: Math.round((modelData.row * identicon.height) / 5)
+              width: Math.round(((modelData.col + 1) * identicon.width) / 5) - x
+              height: Math.round(((modelData.row + 1) * identicon.height) / 5) - y
+              antialiasing: false
+              color: root.deviceColor(deviceRow.device)
+            }
+          }
+        }
       }
 
       ColumnLayout {
