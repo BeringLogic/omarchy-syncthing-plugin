@@ -4,6 +4,8 @@ An [Omarchy](https://omarchy.org) bar widget for Syncthing running in a Docker
 container. The other Syncthing bar widgets assume a systemd unit on the host;
 this one treats the container as the thing that is up or down.
 
+![Omarchy Syncthing Plugin](screenshot.png)
+
 ## Features
 
 - A Syncthing mark in the bar that **spins while syncing**, carries a red `!`
