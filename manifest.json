@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "syncthing.bar",
-  "name": "Syncthing",
+  "name": "Omarchy Syncthing Plugin",
   "version": "1.0.0",
-  "author": "Phil",
+  "author": "Philippe Gouin",
   "license": "MIT",
   "description": "Syncthing status pill and panel for Syncthing running in a Docker container.",
   "kinds": [
