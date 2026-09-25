@@ -1,0 +1,93 @@
+{
+  "alloc": 20589600,
+  "connectionServiceStatus": {
+    "dynamic+https://relays.syncthing.net/endpoint": {
+      "error": null,
+      "lanAddresses": [
+        "relay://203.0.113.10:22067/?id=RELAY01-RRRRRRR-RRRRRRR-RRRRRRR-RRRRRRR-RRRRRRR-RRRRRRR-RRRRRRR"
+      ],
+      "wanAddresses": [
+        "relay://203.0.113.10:22067/?id=RELAY01-RRRRRRR-RRRRRRR-RRRRRRR-RRRRRRR-RRRRRRR-RRRRRRR-RRRRRRR"
+      ]
+    },
+    "quic://0.0.0.0:22000": {
+      "error": null,
+      "lanAddresses": [
+        "quic://0.0.0.0:22000",
+        "quic://[fd7a:115c:a1e0::539:8f30]:22000",
+        "quic://192.168.2.19:22000"
+      ],
+      "wanAddresses": [
+        "quic://0.0.0.0:22000",
+        "quic://76.64.145.47:29864"
+      ]
+    },
+    "tcp://0.0.0.0:22000": {
+      "error": null,
+      "lanAddresses": [
+        "tcp://0.0.0.0:22000",
+        "tcp://[fd7a:115c:a1e0::539:8f30]:22000",
+        "tcp://192.168.2.19:22000"
+      ],
+      "wanAddresses": [
+        "tcp://0.0.0.0:0",
+        "tcp://0.0.0.0:22000"
+      ]
+    }
+  },
+  "cpuPercent": 0,
+  "discoveryEnabled": true,
+  "discoveryErrors": {
+    "global@https://discovery-announce-v6.syncthing.net/v2/": "Post \"https://discovery-announce-v6.syncthing.net/v2/\": dial tcp [2a01:4f8:13b:1643::2]:443: connect: network is unreachable"
+  },
+  "discoveryMethods": 5,
+  "discoveryStatus": {
+    "IPv4 local": {
+      "error": null
+    },
+    "IPv6 local": {
+      "error": null
+    },
+    "global@https://discovery-announce-v4.syncthing.net/v2/": {
+      "error": null
+    },
+    "global@https://discovery-announce-v6.syncthing.net/v2/": {
+      "error": "Post \"https://discovery-announce-v6.syncthing.net/v2/\": dial tcp [2a01:4f8:13b:1643::2]:443: connect: network is unreachable"
+    },
+    "global@https://discovery-lookup.syncthing.net/v2/": {
+      "error": null
+    }
+  },
+  "goroutines": 110,
+  "guiAddressOverridden": true,
+  "guiAddressUsed": "[::]:8384",
+  "lastDialStatus": {
+    "quic://172.21.0.2:22000": {
+      "when": "2026-09-25T19:40:16Z",
+      "error": "dial: timeout: no recent network activity"
+    },
+    "quic://76.64.145.47:22000": {
+      "when": "2026-09-25T19:40:16Z",
+      "error": "dial: timeout: no recent network activity"
+    },
+    "relay://203.0.113.20:22067/?id=RELAY02-SSSSSSS-SSSSSSS-SSSSSSS-SSSSSSS-SSSSSSS-SSSSSSS-SSSSSSS": {
+      "when": "2026-09-25T19:17:09Z",
+      "error": null
+    },
+    "tcp://172.21.0.2:22000": {
+      "when": "2026-09-25T19:40:11Z",
+      "error": "dial tcp 172.21.0.2:22000: i/o timeout"
+    },
+    "tcp://76.64.145.47:22000": {
+      "when": "2026-09-25T19:40:11Z",
+      "error": "dial tcp 76.64.145.47:22000: i/o timeout"
+    }
+  },
+  "myID": "SELFDEV-AAAAAAA-BBBBBBB-CCCCCCC-DDDDDDD-EEEEEEE-FFFFFFF-GGGGGGG",
+  "pathSeparator": "/",
+  "startTime": "2026-09-24T22:46:59Z",
+  "sys": 63854888,
+  "tilde": "/var/syncthing",
+  "uptime": 75207,
+  "urVersionMax": 3
+}

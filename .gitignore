@@ -1,0 +1,7 @@
+# Quickshell/QML build output and caches
+*.qmlc
+qmlcache
+.qmlc
+
+# Node
+node_modules/

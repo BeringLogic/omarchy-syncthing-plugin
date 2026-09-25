@@ -1,0 +1,44 @@
+{
+  "connections": {
+    "REMOTEV-HHHHHHH-IIIIIII-JJJJJJJ-KKKKKKK-LLLLLLL-MMMMMMM-NNNNNNN": {
+      "at": "2026-09-25T19:40:26Z",
+      "inBytesTotal": 806,
+      "outBytesTotal": 623,
+      "startedAt": "2026-09-25T19:17:11Z",
+      "connected": true,
+      "paused": false,
+      "clientVersion": "v2.1.5",
+      "address": "203.0.113.20:22067",
+      "type": "relay-client",
+      "isLocal": false,
+      "crypto": "TLS1.3-TLS_AES_128_GCM_SHA256",
+      "primary": {
+        "at": "2026-09-25T19:40:26Z",
+        "inBytesTotal": 654,
+        "outBytesTotal": 463,
+        "startedAt": "2026-09-25T19:17:11Z",
+        "address": "203.0.113.20:22067",
+        "type": "relay-client",
+        "isLocal": false,
+        "crypto": "TLS1.3-TLS_AES_128_GCM_SHA256"
+      },
+      "secondary": [
+        {
+          "at": "2026-09-25T19:40:26Z",
+          "inBytesTotal": 152,
+          "outBytesTotal": 160,
+          "startedAt": "2026-09-25T19:17:19Z",
+          "address": "203.0.113.10:22067",
+          "type": "relay-server",
+          "isLocal": false,
+          "crypto": "TLS1.3-TLS_AES_128_GCM_SHA256"
+        }
+      ]
+    }
+  },
+  "total": {
+    "at": "2026-09-25T19:40:26Z",
+    "inBytesTotal": 7996048637,
+    "outBytesTotal": 25712299
+  }
+}

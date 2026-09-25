@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "id": "syncthing.bar",
+  "name": "Syncthing",
+  "version": "1.0.0",
+  "author": "Phil",
+  "license": "MIT",
+  "description": "Syncthing status pill and panel for Syncthing running in a Docker container.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Syncthing",
+    "description": "Folder and device status for a containerized Syncthing, with rescan and pause controls.",
+    "category": "Files",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "schema": [
+      {
+        "key": "apiBase",
+        "type": "string",
+        "label": "Syncthing API base URL",
+        "defaultValue": "http://127.0.0.1:8384",
+        "description": "Syncthing GUI address."
+      },
+      {
+        "key": "apiKeyPath",
+        "type": "string",
+        "label": "Syncthing config.xml path",
+        "defaultValue": "~/docker/syncthing/var_syncthing/config/config.xml",
+        "description": "Read the <apikey> element out of this file."
+      },
+      {
+        "key": "containerName",
+        "type": "string",
+        "label": "Docker container name",
+        "defaultValue": "syncthing",
+        "description": "Container stopped and started by the panel toggle."
+      },
+      {
+        "key": "usePolkit",
+        "type": "boolean",
+        "label": "Run docker through pkexec",
+        "defaultValue": true,
+        "description": "Leave on unless the shell's user can already reach the Docker socket."
+      },
+      {
+        "key": "refreshIntervalSec",
+        "type": "integer",
+        "label": "Idle refresh interval (seconds)",
+        "min": 5,
+        "max": 3600,
+        "step": 5,
+        "defaultValue": 15
+      },
+      {
+        "key": "busyIntervalSec",
+        "type": "integer",
+        "label": "Active refresh interval (seconds)",
+        "min": 2,
+        "max": 300,
+        "step": 1,
+        "defaultValue": 3
+      },
+      {
+        "key": "webUrl",
+        "type": "string",
+        "label": "Web UI link",
+        "defaultValue": "http://localhost:8384/",
+        "description": "Opened in the default browser from the panel footer."
+      }
+    ]
+  }
+}
