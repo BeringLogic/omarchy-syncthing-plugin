@@ -214,8 +214,6 @@ function deviceStatusLabel(device) {
 
 // Rows for the DEVICES section. The self device is included so the toggle and
 // the connection list line up; it just never gets a pause button.
-//
-
 // The web UI's device identicon, reproduced.
 //
 // Syncthing has no identicon endpoint: the GUI's
@@ -422,6 +420,13 @@ function shortId(id) {
   var text = str(id)
   if (text.length <= 7) return text
   return text.substring(0, 7)
+}
+
+// Single-quote a value for safe use as one bash argument. Device IDs are
+// currently all [A-Z0-9-], so this never fires in practice -- it exists so a
+// future ID format cannot turn a copy into an arbitrary command.
+function shellQuote(value) {
+  return "'" + str(value).replace(/'/g, "'\\''") + "'"
 }
 
 // ---------- formatting ----------

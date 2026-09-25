@@ -795,6 +795,16 @@ Panel {
         Layout.alignment: Qt.AlignVCenter
         onClicked: st.toggleDevicePause(deviceRow.device)
       }
+
+      PanelActionButton {
+        visible: deviceRow.device.deviceID !== ""
+        iconText: "󰆏"
+        tooltipText: "Copy " + deviceRow.device.name + "'s device ID"
+        foreground: root.foreground
+        fontFamily: root.fontFamily
+        Layout.alignment: Qt.AlignVCenter
+        onClicked: st.copyDeviceId(deviceRow.device)
+      }
     }
   }
 }

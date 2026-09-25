@@ -302,6 +302,19 @@ Item {
     Quickshell.execDetached(["omarchy-launch-browser", webUrl])
   }
 
+  // A device ID is the one thing a user has to transcribe by hand when writing
+  // config on another machine, so the copy button is worth a toast confirming
+  // it landed -- a bare clipboard write is invisible and unfalsifiable.
+  function copyDeviceId(device) {
+    if (!device || !device.deviceID) return
+    var id = device.deviceID
+    Quickshell.execDetached([
+      "bash", "-c",
+      "wl-copy -- " + Model.shellQuote(id) +
+        " && omarchy-notification-send " + Model.shellQuote(id + " copied to the clipboard")
+    ])
+  }
+
   onApiKeyPathChanged: _apiKey = ""
   onApiBaseChanged: _apiKey = ""
 

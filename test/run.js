@@ -21,7 +21,7 @@ const load = new Function(
   source + "\nreturn { splitRecords, safeParse, isPlainObject, readApiKey, expandPath, parseHealth,"
     + " buildFolders, buildDevices, overallStatus, pendingCount, errorCount, formatBytes, formatAgo,"
     + " formatUptime, folderState, folderProgress, folderErrorText, elide, shortId, deviceStatusLabel,"
-    + " identiconCells };"
+    + " identiconCells, shellQuote };"
 );
 const M = load();
 
@@ -447,8 +447,26 @@ check("uptime: junk in, 0 out", M.formatUptime("nope"), "0m");
 check("elide short text", M.elide("hello", 20), "hello");
 check("elide long text", M.elide("x".repeat(100), 10).length, 10);
 check("elide collapses whitespace", M.elide("a   b\n\tc", 20), "a b c");
-check("short id", M.shortId(REMOTE_ID), "REMOTEV");
+check("short id caps at seven characters", M.shortId("ABCDEFGHIJKLMNOP"), "ABCDEFG");
+check("short id of a device id is its first group", M.shortId(REMOTE_ID), REMOTE_ID.split("-")[0]);
 check("short id of short input", M.shortId("abc"), "abc");
+
+check("quote: plain value", M.shellQuote("SELFDEV-AAAAAAA"), "'SELFDEV-AAAAAAA'");
+check("quote: strips command substitution", M.shellQuote("$(id)"), "'$(id)'");
+check("quote: strips backticks", M.shellQuote("`id`"), "'`id`'");
+check("quote: strips semicolons", M.shellQuote("a; rm -rf /"), "'a; rm -rf /'");
+check("quote: escapes embedded single quotes", M.shellQuote("it's"), "'it'\\''s'");
+check("quote: empty value", M.shellQuote(""), "''");
+// Actually run the quoted values through bash. A quoting bug here would turn a
+// copy button into arbitrary command execution, so it gets a real round trip
+// rather than a string comparison.
+const { execFileSync } = require("child_process");
+for (const value of ["SELFDEV-AAAAAAA", "it's", "$(id)", "`id`", "a b; c", "a\nb", "x'"]) {
+  check("quote round trips through bash: " + JSON.stringify(value),
+    execFileSync("bash", ["-c", "printf %s " + M.shellQuote(value)], { encoding: "utf8" }),
+    value);
+}
+
 // ------------------------------------------------------------- device identicon
 
 // The web UI builds these in the browser (syncthing/core/identiconDirective.js)
@@ -485,7 +503,7 @@ const IDENTICON_IDS = [
   REMOTE_ID,
   "SHORT", "a", "abcdefghijklmnop", "12345",
   "ZZZZZZZZZZZZZZZ", "0000000000000000", "x-y_z", "-----", "___",
-  "", "\u03a9", "\u{1f642}",
+  "", "Ω", "🙂",
 ];
 for (const id of IDENTICON_IDS) {
   check(`identicon matches the web UI directive: ${JSON.stringify(id)}`,
