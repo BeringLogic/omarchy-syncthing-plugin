@@ -500,7 +500,7 @@ Panel {
               spacing: Style.space(8)
 
               Text {
-                text: "󰖀"
+                text: "󰌷"
                 color: root.dim
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.icon
@@ -651,7 +651,7 @@ Panel {
       PanelActionButton {
         id: rescanButton
         visible: !folderRow.folder.pending
-        iconText: "󰑚"
+        iconText: "󰃨"
         tooltipText: folderRow.rescanTip
         foreground: root.foreground
         fontFamily: root.fontFamily
