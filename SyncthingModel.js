@@ -262,8 +262,11 @@ function identiconCells(value, size) {
   return cells
 }
 
-function buildDevices(config, status, connections, pendingDevices, stats) {
+// `nowMs` is injectable so the caller -- and the test suite -- can pin the clock
+// when it cares about the relative wording of `lastSeenText`.
+function buildDevices(config, status, connections, pendingDevices, stats, nowMs) {
   var out = []
+  var now = typeof nowMs === "number" ? nowMs : Date.now()
   var myId = str(isPlainObject(status) ? status.myID : "")
   var configured = isPlainObject(config) && Array.isArray(config.devices) ? config.devices : []
   var conns = isPlainObject(connections) && isPlainObject(connections.connections) ? connections.connections : {}
@@ -287,7 +290,7 @@ function buildDevices(config, status, connections, pendingDevices, stats) {
       address: conn !== null ? str(conn.address) : "",
       clientName: conn !== null ? str(conn.clientName) : "",
       lastSeen: seen,
-      lastSeenText: seen === "" ? "" : formatAgo(seen),
+      lastSeenText: seen === "" ? "" : formatAgo(seen, now),
       identicon: identiconCells(id)
     }
     device.state = deviceState(device)

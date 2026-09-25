@@ -305,7 +305,8 @@ check("peer address kept", devices[1].address, "203.0.113.20:22067");
     { myID: "BBB" },
     { connections: {} },
     {},
-    { AAA: { lastSeen: new Date(NOW - 3600000).toISOString().replace(/\.\d+Z$/, "Z") } }
+    { AAA: { lastSeen: new Date(NOW - 3600000).toISOString().replace(/\.\d+Z$/, "Z") } },
+    NOW
   );
   check("offline with a last-seen reads well", seen[0].statusLabel, "Offline · last seen 1 hour ago");
 }
