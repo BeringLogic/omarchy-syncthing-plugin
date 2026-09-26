@@ -360,6 +360,13 @@ Panel {
             visible: st.actionStatus !== "" || st.lastError !== ""
             width: parent.width
             text: st.actionStatus !== "" ? st.actionStatus : st.lastError
+            // PlainText, because runAction() builds this line out of a folder
+            // label. A folder label is attacker-controllable by anyone who can
+            // reach the Syncthing GUI, and the default AutoText would let markup
+            // in it render -- including <img src=...>, which makes QTextDocument
+            // fetch the referenced resource. Same reason the folder and device
+            // rows below pin this.
+            textFormat: Text.PlainText
             color: st.lastError !== "" && st.actionStatus === ""
               ? root.urgent
               : (st.starting ? root.warningColor : root.dim)
@@ -382,6 +389,9 @@ Panel {
               anchors.verticalCenter: parent.verticalCenter
               anchors.margins: Style.space(12)
               text: st.containerName + " is not answering on " + st.apiBase
+              // Both halves come from manifest settings the user can edit, so
+              // they get the same PlainText treatment as the label above.
+              textFormat: Text.PlainText
               color: root.dim
               font.family: root.fontFamily
               font.pixelSize: Style.font.body
